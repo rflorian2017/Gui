@@ -1,3 +1,7 @@
+import helpers.DepartmentParser;
+import model.Company;
+import model.Department;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -12,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.awt.event.ActionEvent;
 import javax.swing.JEditorPane;
@@ -71,37 +76,24 @@ public class MainForm {
                 HashMap<String, ArrayList<String>> companies = new HashMap<String, ArrayList<String>>();
                 File folder = new File("C:\\tmp\\companies\\company_javarullz");
 
+                List<Department> departmentList  = new ArrayList<>();
                 for(File file:folder.listFiles()) {
-
                     try {
-                        BufferedReader br = new BufferedReader(new FileReader(file));
-                        String st;
-                        while ((st = br.readLine()) != null)  {
-                            ArrayList<String> fields = new ArrayList<String>();
-                            fields.add(st);
-                            try {
-                                companies.get(file.getName()).addAll(fields);}
-
-                            catch (Exception e) {
-                                // TODO: handle exception
-                                companies.put(file.getName(),fields);
-                            }
-                        }
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
+                        departmentList.add(DepartmentParser.parseDepartmentFile(
+                                file.getPath()));
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-
 
                 }
 
                 for(String company: companies.keySet()) {
                     editorPane.setText(editorPane.getText() + "\n" + "Company: " + company + "has the employees:\n");
                     for(String employee_details: companies.get(company)) {
-                        editorPane.setText(editorPane.getText() + "Employee id: " + employee_details.split(",")[0]
-                                +"\nEmployee name: " + employee_details.split(",")[1] +
-                                "\nEmployee age: " + employee_details.split(",")[2] +
-                                "\nEmployee salary: " + employee_details.split(",")[3] +"\n"
+                        editorPane.setText(editorPane.getText() + "model.Employee id: " + employee_details.split(",")[0]
+                                +"\nmodel.Employee name: " + employee_details.split(",")[1] +
+                                "\nmodel.Employee age: " + employee_details.split(",")[2] +
+                                "\nmodel.Employee salary: " + employee_details.split(",")[3] +"\n"
                         );
                     }
                 }
