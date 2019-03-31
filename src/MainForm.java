@@ -1,10 +1,8 @@
 import helpers.SqliteWrapper;
 
-import java.awt.EventQueue;
+import java.awt.*;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JButton;
+import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,14 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.awt.event.ActionEvent;
-import javax.swing.JEditorPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JTabbedPane;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JTextPane;
-import javax.swing.JTextArea;
 
 public class MainForm {
 
@@ -31,6 +21,8 @@ public class MainForm {
     private JTextField textField;
     private JTextField textField_1;
     private int clickedTimes = 0;
+    private JTable table;
+    private JTextField txtValueDel;
 
     /**
      * Launch the application.
@@ -145,27 +137,98 @@ public class MainForm {
         textPaneSalary.setBounds(89, 60, 67, 20);
         panel_1.add(textPaneSalary);
 
+//        JTextArea textAreaQueryResult = new JTextArea();
+//        textAreaQueryResult.setBounds(10, 138, 497, 203);
+//        textAreaQueryResult.setAutoscrolls(true);
+//        panel_1.add(textAreaQueryResult);
+
+        JScrollPane scrollPane_3 = new JScrollPane();
+        scrollPane_3.setBounds(20, 138, 497, 203);
+        panel_1.add(scrollPane_3);
+
         JTextArea textAreaQueryResult = new JTextArea();
-        textAreaQueryResult.setBounds(10, 138, 497, 203);
-        panel_1.add(textAreaQueryResult);
+        scrollPane_3.setViewportView(textAreaQueryResult);
 
 
         JButton btnInsert = new JButton("Insert");
         btnInsert.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 SqliteWrapper sqliteWrapper = new SqliteWrapper();
+                if (LabelDataValidation(lblNewLabel, textPaneName.getText())) return;
+                if (LabelDataValidation(lblAge, textPaneAge.getText())) return;
+                if (LabelDataValidation(lblSalary, textPaneSalary.getText())) return;
+
+
                 sqliteWrapper.insert(textPaneName.getText(),
                         Integer.parseInt(textPaneAge.getText()),
                         Integer.parseInt(textPaneSalary.getText()));
 
-                textAreaQueryResult.setText(sqliteWrapper.selectAll());
+
+            }
+
+            private boolean LabelDataValidation(JLabel label, String text) {
+                if(text.isEmpty()) {
+                    label.setForeground(Color.RED);
+                    return true;
+                }
+                else {
+                    label.setForeground(Color.BLACK);
+                }
+                return false;
             }
         });
         btnInsert.setBounds(10, 104, 89, 23);
         panel_1.add(btnInsert);
 
+        JPanel panel_2 = new JPanel();
+        tabbedPane.addTab("View", null, panel_2, null);
+        panel_2.setLayout(null);
 
+        table = new JTable();
+        table.setBounds(10, 338, 499, -326);
+        panel_2.add(table);
 
+        JScrollPane scrollPaneTable = new JScrollPane(table);
+        table.setFillsViewportHeight(true);
+
+        JButton btnView = new JButton("View");
+        btnView.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                SqliteWrapper sqliteWrapper = new SqliteWrapper();
+                textAreaQueryResult.setText(sqliteWrapper.selectAll());
+            }
+        });
+        btnView.setBounds(109, 104, 89, 23);
+        panel_1.add(btnView);
+
+        JPanel panel_3 = new JPanel();
+        tabbedPane.addTab("Delete", null, panel_3, null);
+        panel_3.setLayout(null);
+
+        JComboBox comboBox = new JComboBox();
+        comboBox.setModel(new DefaultComboBoxModel(new String[] {"ID", "Name", "age", "salary"}));
+        comboBox.setBounds(130, 11, 89, 20);
+        panel_3.add(comboBox);
+
+        JLabel lblDeleteCriteria = new JLabel("Delete criteria");
+        lblDeleteCriteria.setBounds(10, 14, 110, 14);
+        panel_3.add(lblDeleteCriteria);
+
+        JButton btnDelete = new JButton("Delete");
+        btnDelete.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                SqliteWrapper sqliteWrapper = new SqliteWrapper();
+                sqliteWrapper.deleteQuery(comboBox.getSelectedItem().toString(), txtValueDel.getText());
+            }
+        });
+        btnDelete.setBounds(10, 45, 89, 23);
+        panel_3.add(btnDelete);
+
+        txtValueDel = new JTextField();
+        txtValueDel.setText("value");
+        txtValueDel.setBounds(229, 11, 101, 20);
+        panel_3.add(txtValueDel);
+        txtValueDel.setColumns(10);
     }
 }
 

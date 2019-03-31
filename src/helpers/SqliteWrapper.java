@@ -1,5 +1,7 @@
 package helpers;
 
+import constants.ApplicationConstants;
+
 import java.sql.*;
 
 public class SqliteWrapper {
@@ -61,6 +63,35 @@ public class SqliteWrapper {
             System.out.println(ex.getMessage());
         }
         return toReturn;
+    }
+
+    public void deleteQuery(String criteria, String value) {
+        String sql = "DELETE FROM " +
+                ApplicationConstants.EMPLOYEE_TABLE +
+                " WHERE "+ criteria + " = ?";
+
+        Connection connection = this.connect();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            switch (criteria) {
+                case "ID":
+                    preparedStatement.setInt(1, Integer.parseInt(value));
+                    break;
+                case "Name":
+                    preparedStatement.setString(2,value);
+                    break;
+                case "age" :
+                    preparedStatement.setInt(3, Integer.parseInt(value));
+                break;
+                case "salary" :
+                    preparedStatement.setInt(4, Integer.parseInt(value));
+                    break;
+            }
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
