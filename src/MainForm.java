@@ -1,4 +1,7 @@
+import helpers.EmployeParser;
 import helpers.SqliteWrapper;
+import model.Department;
+import model.Employee;
 
 import java.awt.*;
 
@@ -12,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.awt.event.ActionEvent;
 
@@ -95,12 +99,36 @@ public class MainForm {
         editorPane.setAutoscrolls(true);
         btnNewButton_1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                SqliteWrapper sqliteWrapper = new SqliteWrapper();
+                List<Employee> employeList = sqliteWrapper.selectAllAsEmployees();
+                List<Department> departmentList = sqliteWrapper.selectAllDepartents();
+                HashMap<Integer, Integer> mappingEmplDept = sqliteWrapper.getAllDepartmentsEmployeesMappings();
+                String text = "";
+                for (Employee employee : employeList
+                ) {
+                    if(mappingEmplDept.containsKey(Integer.parseInt(employee.getId()))) {
+                        text += employee.getName() + " works in ";
+                        for (Department dep:departmentList
+                             ) {
+                            if(dep.getId() ==
+                                    mappingEmplDept.get(Integer.parseInt(employee.getId()))) {
+                                text += dep.getName() + "\n";
+                                break;
+                            }
 
+                        }
+                    }
+
+                    else {
+                        //employee not in department
+
+                    }
+                }
+                editorPane.setText(text);
             }
         });
         btnNewButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-
 
 
             }
@@ -167,11 +195,10 @@ public class MainForm {
             }
 
             private boolean LabelDataValidation(JLabel label, String text) {
-                if(text.isEmpty()) {
+                if (text.isEmpty()) {
                     label.setForeground(Color.RED);
                     return true;
-                }
-                else {
+                } else {
                     label.setForeground(Color.BLACK);
                 }
                 return false;
@@ -206,7 +233,7 @@ public class MainForm {
         panel_3.setLayout(null);
 
         JComboBox comboBox = new JComboBox();
-        comboBox.setModel(new DefaultComboBoxModel(new String[] {"ID", "Name", "age", "salary"}));
+        comboBox.setModel(new DefaultComboBoxModel(new String[]{"ID", "Name", "age", "salary"}));
         comboBox.setBounds(130, 11, 89, 20);
         panel_3.add(comboBox);
 
