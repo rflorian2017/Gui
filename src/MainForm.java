@@ -145,6 +145,11 @@ public class MainForm {
         textPaneSalary.setBounds(89, 60, 67, 20);
         panel_1.add(textPaneSalary);
 
+        JTextArea textAreaQueryResult = new JTextArea();
+        textAreaQueryResult.setBounds(10, 138, 497, 203);
+        panel_1.add(textAreaQueryResult);
+
+
         JButton btnInsert = new JButton("Insert");
         btnInsert.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
@@ -152,14 +157,13 @@ public class MainForm {
                 sqliteWrapper.insert(textPaneName.getText(),
                         Integer.parseInt(textPaneAge.getText()),
                         Integer.parseInt(textPaneSalary.getText()));
+
+                textAreaQueryResult.setText(sqliteWrapper.selectAll());
             }
         });
         btnInsert.setBounds(10, 104, 89, 23);
         panel_1.add(btnInsert);
 
-        JTextArea textAreaQueryResult = new JTextArea();
-        textAreaQueryResult.setBounds(10, 138, 497, 203);
-        panel_1.add(textAreaQueryResult);
 
 
     }

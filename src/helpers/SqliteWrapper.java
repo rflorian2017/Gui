@@ -1,9 +1,6 @@
 package helpers;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class SqliteWrapper {
     /**
@@ -42,6 +39,28 @@ public class SqliteWrapper {
             System.out.println(ex.getMessage());
         }
 
+    }
+
+    public String selectAll() {
+        String sql = "SELECT * FROM employees";
+        String toReturn = "";
+        try {
+            Connection conn = this.connect();
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+                toReturn += resultSet.getInt("id") + "\t"
+                        + resultSet.getString(2) + "\t" +
+                        resultSet.getInt("age") + "\t" +
+                        resultSet.getInt("salary") + "\n";
+            }
+
+        }
+        catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return toReturn;
     }
 
 }
