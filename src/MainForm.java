@@ -1,6 +1,4 @@
-import helpers.DepartmentParser;
-import model.Company;
-import model.Department;
+import helpers.SqliteWrapper;
 
 import java.awt.EventQueue;
 
@@ -16,12 +14,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 import java.awt.event.ActionEvent;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JTabbedPane;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 
 public class MainForm {
 
@@ -58,125 +60,108 @@ public class MainForm {
      */
     private void initialize() {
         frame = new JFrame();
-        frame.setBounds(100, 100, 450, 300);
+        frame.setBounds(100, 100, 646, 443);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
+
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        tabbedPane.setBounds(20, 11, 524, 382);
+        frame.getContentPane().add(tabbedPane);
+
+        JScrollPane scrollPane = new JScrollPane();
+        tabbedPane.addTab("Old", null, scrollPane, null);
+
+        JPanel panel = new JPanel();
+        scrollPane.setViewportView(panel);
+        panel.setLayout(null);
+
+        JButton btnNewButton = new JButton("New button");
+        btnNewButton.setBounds(10, 11, 89, 23);
+        panel.add(btnNewButton);
+
+        textField = new JTextField();
+        textField.setBounds(121, 12, 86, 20);
+        panel.add(textField);
+        textField.setColumns(10);
+
+        textField_1 = new JTextField();
+        textField_1.setBounds(121, 43, 86, 20);
+        panel.add(textField_1);
+        textField_1.setColumns(10);
+
+        JButton btnNewButton_1 = new JButton("New button");
+        btnNewButton_1.setBounds(245, 11, 89, 23);
+        panel.add(btnNewButton_1);
         JScrollPane scrollPane_1 = new JScrollPane();
-        scrollPane_1.setBounds(10, 11, 414, 127);
-        frame.getContentPane().add(scrollPane_1);
+        scrollPane_1.setBounds(10, 74, 414, 127);
+        panel.add(scrollPane_1);
 
         JEditorPane editorPane = new JEditorPane();
         scrollPane_1.setViewportView(editorPane);
         editorPane.setEditable(false);
         editorPane.setAutoscrolls(true);
-
-        JButton btnNewButton = new JButton("New button");
-        btnNewButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                HashMap<String, ArrayList<String>> companies = new HashMap<String, ArrayList<String>>();
-                File folder = new File("C:\\tmp\\companies\\company_javarullz");
-
-                List<Department> departmentList  = new ArrayList<>();
-                for(File file:folder.listFiles()) {
-                    try {
-                        departmentList.add(DepartmentParser.parseDepartmentFile(
-                                file.getPath()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
-
-                for(String company: companies.keySet()) {
-                    editorPane.setText(editorPane.getText() + "\n" + "Company: " + company + "has the employees:\n");
-                    for(String employee_details: companies.get(company)) {
-                        editorPane.setText(editorPane.getText() + "model.Employee id: " + employee_details.split(",")[0]
-                                +"\nmodel.Employee name: " + employee_details.split(",")[1] +
-                                "\nmodel.Employee age: " + employee_details.split(",")[2] +
-                                "\nmodel.Employee salary: " + employee_details.split(",")[3] +"\n"
-                        );
-                    }
-                }
-
-
-            }
-        });
-
-
-        btnNewButton.setBounds(10, 149, 89, 23);
-        frame.getContentPane().add(btnNewButton);
-
-        textField = new JTextField();
-        textField.setBounds(136, 149, 86, 20);
-        frame.getContentPane().add(textField);
-        textField.setColumns(10);
-
-        textField_1 = new JTextField();
-        textField_1.setBounds(136, 180, 86, 20);
-        frame.getContentPane().add(textField_1);
-        textField_1.setColumns(10);
-
-        JButton btnNewButton_1 = new JButton("New button");
         btnNewButton_1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                clickedTimes ++;
-                if(clickedTimes < 5) {
 
-                    if(clickedTimes < 4) {
-                        if(clickedTimes == 2) {
-                            JOptionPane.showMessageDialog(frame, "That tickles!");
-                        }
-                        else
-                            JOptionPane.showMessageDialog(frame, "Ooo, go on now!");
-                    }
-                }
-                else {
-                    if(textField.getText().isEmpty() || textField_1.getText().isEmpty()) {
-                        return;
-                    }
-                    else {
-                        try {
-                            Helper.method("C:\\\\tmp\\\\companies\\\\company_javarullz", Integer.parseInt(textField.getText()), Integer.parseInt(textField_1.getText()));
-                        } catch (IOException e1) {
-                            // TODO Auto-generated catch block
-                            e1.printStackTrace();
-                        }
-                    }
-                }
             }
         });
-        btnNewButton_1.setBounds(244, 149, 89, 23);
-        frame.getContentPane().add(btnNewButton_1);
+        btnNewButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+
+
+
+            }
+        });
+
+        JScrollPane scrollPane_2 = new JScrollPane();
+        tabbedPane.addTab("Insert", null, scrollPane_2, null);
+
+        JPanel panel_1 = new JPanel();
+        scrollPane_2.setViewportView(panel_1);
+        panel_1.setLayout(null);
+
+        JLabel lblNewLabel = new JLabel("Name");
+        lblNewLabel.setBounds(10, 11, 67, 14);
+        panel_1.add(lblNewLabel);
+
+        JTextPane textPaneName = new JTextPane();
+        textPaneName.setBounds(89, 11, 67, 20);
+        panel_1.add(textPaneName);
+
+        JLabel lblAge = new JLabel("Age");
+        lblAge.setBounds(10, 36, 46, 14);
+        panel_1.add(lblAge);
+
+        JTextPane textPaneAge = new JTextPane();
+        textPaneAge.setBounds(89, 36, 67, 20);
+        panel_1.add(textPaneAge);
+
+        JLabel lblSalary = new JLabel("Salary");
+        lblSalary.setBounds(10, 66, 46, 14);
+        panel_1.add(lblSalary);
+
+        JTextPane textPaneSalary = new JTextPane();
+        textPaneSalary.setBounds(89, 60, 67, 20);
+        panel_1.add(textPaneSalary);
+
+        JButton btnInsert = new JButton("Insert");
+        btnInsert.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                SqliteWrapper sqliteWrapper = new SqliteWrapper();
+                sqliteWrapper.insert(textPaneName.getText(),
+                        Integer.parseInt(textPaneAge.getText()),
+                        Integer.parseInt(textPaneSalary.getText()));
+            }
+        });
+        btnInsert.setBounds(10, 104, 89, 23);
+        panel_1.add(btnInsert);
+
+        JTextArea textAreaQueryResult = new JTextArea();
+        textAreaQueryResult.setBounds(10, 138, 497, 203);
+        panel_1.add(textAreaQueryResult);
 
 
     }
 }
 
-class Helper {
-    public static void method(String str, int a, int b) throws IOException {
-        new File(str).mkdirs();
-        for(int i=0; i< a; i++ ) {
-            BufferedWriter writer = null;
-            try {
-                writer = new BufferedWriter(new FileWriter(str + "\\dept" + i + ".txt"));
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            try {
-                writer.write("id,name,age,salary\r\n");
-                for(int j=0; j< b; j++) {
-                    Random rand = new Random(100);
-
-                    writer.write("id" + rand.nextInt() + ",name"+rand.nextInt() + "," + rand.nextInt() + "," + new Random(10000).nextInt()+"\r\n");
-                }
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            writer.close();
-        }
-
-    }
-}
