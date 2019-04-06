@@ -1,0 +1,24 @@
+INSERT INTO employees (ID, NAME, AGE, SALARY) VALUES (1, "John Doe", 23, 1500);
+INSERT INTO employees (ID, NAME, AGE) VALUES (3, "jane Doe", 33);
+INSERT INTO employees (ID, NAME, AGE) VALUES (5, "Bob", 25);
+SELECT * FROM employees
+SELECT id, age from employees
+SELECT NAME, ID FROM employees
+DELETE FROM employees WHERE id = 3;
+SELECT * FROM employees
+CREATE TABLE employees (ID INTEGER AUTOINCREMENT, NAME TEXT, AGE INTEGER, SALARY INTEGER);
+ALTER TABLE employees RENAME ID TO ID_old;
+SELECT * FROM employees;
+ALTER TABLE employees ADD ID INTEGER AI;
+DROP TABLE employees;
+CREATE TABLE employees (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT, AGE INTEGER, SALARY INTEGER);
+INSERT INTO employees (ID, NAME, AGE, SALARY) VALUES (1, "John Doe", 23, 1500); 
+SELECT DISTINCT * FROM employees
+SELECT DISTINCT NAME as "Name Surname" FROM employees
+DELETE FROM employees WHERE ID = 2;
+INSERT INTO employees (NAME, AGE, SALARY) VALUES ("Timmy", 23, 1500); 
+UPDATE employees SET name = "Johny Cash" WHERE ID = 1;
+CREATE TABLE department (ID PRIMARY KEY, NAME TEXT);
+UPDATE department SET id = 5 WHERE name = "Human Resources";
+SELECT * from department
+ALTER TABLE department ADD COLUMN employee_id INTEGER 
