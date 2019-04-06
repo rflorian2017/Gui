@@ -307,7 +307,7 @@ public class MainForm {
                     chckbxAutoIncrement.setSelected(true);
                     chckbxAutoIncrement.setEnabled(false);
                     //getComboText = chckbxPrimaryKey.getText() +" " +chckbxAutoIncrement.getText();
-                    getComboText = "PRIMARY KEY" + " " + "AUTOINCREMENT";
+                    getComboText += "PRIMARY KEY" + " " + "AUTOINCREMENT";
                     chckbxPrimaryKey.setEnabled(false);
                     chckbxPrimaryKey.setSelected(false);
                     chckbxAutoIncrement.setSelected(false);
@@ -351,14 +351,15 @@ public class MainForm {
         JButton btnCreateTable = new JButton("Create table");
         btnCreateTable.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                SqliteWrapper sqliteWrapper = new SqliteWrapper();
+                sqliteWrapper.createTable(textAreaQueryTableCreation.getText());
             }
         });
         btnCreateTable.setBounds(10, 330, 615, 23);
         panel_5.add(btnCreateTable);
         btnNewButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                SqliteWrapper sqliteWrapper = new SqliteWrapper();
-                sqliteWrapper.createTable(textAreaQueryTableCreation.getText());
+
             }
         });
         btnNewButton_1.addActionListener(new ActionListener() {

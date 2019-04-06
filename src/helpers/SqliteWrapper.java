@@ -199,12 +199,11 @@ public class SqliteWrapper {
 
     }
 
-    public void createTable(String str) {
-        String sql = str;
+    public void createTable(String sql) {
         try {
             Connection conn = this.connect();
             Statement statement = conn.createStatement();
-            statement.executeQuery(sql);
+            statement.execute(sql);
 
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
