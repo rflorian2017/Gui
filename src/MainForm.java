@@ -1,3 +1,4 @@
+import constants.ApplicationConstants;
 import helpers.SqliteWrapper;
 import model.Department;
 import model.Employee;
@@ -159,7 +160,7 @@ public class MainForm {
         panel_3.setLayout(null);
 
         JComboBox comboBox = new JComboBox();
-        comboBox.setModel(new DefaultComboBoxModel(new String[] {"ID", "Name", "Age", "Salary"}));
+        comboBox.setModel(new DefaultComboBoxModel(new String[]{"ID", "Name", "Age", "Salary"}));
         comboBox.setBounds(130, 11, 89, 20);
         panel_3.add(comboBox);
 
@@ -371,20 +372,18 @@ public class MainForm {
                 String text = "";
                 for (Employee employee : employeList
                 ) {
-                    if(mappingEmplDept.containsKey(Integer.parseInt(employee.getId()))) {
+                    if (mappingEmplDept.containsKey(Integer.parseInt(employee.getId()))) {
                         text += employee.getName() + " works in ";
-                        for (Department dep:departmentList
+                        for (Department dep : departmentList
                         ) {
-                            if(dep.getId() ==
+                            if (dep.getId() ==
                                     mappingEmplDept.get(Integer.parseInt(employee.getId()))) {
                                 text += dep.getName() + "\n";
                                 break;
                             }
 
                         }
-                    }
-
-                    else {
+                    } else {
                         //employee not in department
 
                     }
@@ -415,8 +414,8 @@ public class MainForm {
                 comboBoxJoinTable1.removeAllItems();
 
                 for (String column : sqliteWrapper.getAllColumns(
-                        (String)comboBoxTable1.getSelectedItem())
-                     ) {
+                        (String) comboBoxTable1.getSelectedItem())
+                ) {
                     comboBoxJoinTable1.addItem(column);
 
                 }
@@ -439,10 +438,12 @@ public class MainForm {
         JButton btnGettables = new JButton("Get Tables");
         btnGettables.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                comboBoxTable1.removeAllItems();
+                comboBoxTable2.removeAllItems();
                 SqliteWrapper sqliteWrapper = new SqliteWrapper();
                 List<String> tableList = sqliteWrapper.getAllTables();
-                for (String table: tableList
-                     ) {
+                for (String table : tableList
+                ) {
                     comboBoxTable1.addItem(table);
                     comboBoxTable2.addItem(table);
                 }
@@ -459,7 +460,13 @@ public class MainForm {
 
         JComboBox comboBoxJoinType = new JComboBox();
         comboBoxJoinType.setBounds(205, 104, 122, 20);
+        comboBoxJoinType.setModel(new DefaultComboBoxModel(
+                new String[]{"Left(outer) Join",
+                        "Right (outer) Join",
+                        "(Inner) Join",
+                        "Full Outer Join"}));
         panelJoin.add(comboBoxJoinType);
+
 
         JLabel lblTable_2 = new JLabel("Table2");
         lblTable_2.setBounds(205, 135, 46, 14);
@@ -468,7 +475,6 @@ public class MainForm {
         JLabel lblTable_3 = new JLabel("Table1");
         lblTable_3.setBounds(10, 135, 46, 14);
         panelJoin.add(lblTable_3);
-
 
 
         JScrollPane scrollPane_4 = new JScrollPane();
@@ -483,7 +489,7 @@ public class MainForm {
             public void actionPerformed(ActionEvent e) {
             }
         });
-        btnCreateQuery.setBounds(10, 332, 106, 23);
+        btnCreateQuery.setBounds(10, 332, 127, 23);
         panelJoin.add(btnCreateQuery);
 
         JButton btnExecuteQuery = new JButton("Execute query");
@@ -491,11 +497,10 @@ public class MainForm {
             public void actionPerformed(ActionEvent e) {
             }
         });
-        btnExecuteQuery.setBounds(126, 332, 106, 23);
+        btnExecuteQuery.setBounds(498, 332, 127, 23);
         panelJoin.add(btnExecuteQuery);
         btnNewButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-
 
 
             }
@@ -507,10 +512,21 @@ public class MainForm {
         JMenu mnFile = new JMenu("File");
         menuBar.add(mnFile);
 
+        JCheckBoxMenuItem chckbxmntmSqlite = new JCheckBoxMenuItem("SQLite");
+        chckbxmntmSqlite.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent arg0) {
+                if(chckbxmntmSqlite.isSelected()) {
+                    ApplicationConstants.MYSQL_SELECTED = false;
+                }
+                else {
+                    ApplicationConstants.MYSQL_SELECTED = true;
+                }
+            }
+        });
+        mnFile.add(chckbxmntmSqlite);
+
         JMenuItem mntmSettings = new JMenuItem("Settings");
         mnFile.add(mntmSettings);
-
-
 
 
     }

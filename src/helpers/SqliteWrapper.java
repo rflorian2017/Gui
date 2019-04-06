@@ -13,14 +13,19 @@ public class SqliteWrapper {
     /**
      * @return a Connection to a SQLITE db
      */
+    String url = ApplicationConstants.SQLITE;
+
     private Connection connect() {
         //link to db
-        String url = "jdbc:sqlite:c:\\Users\\Roby-L\\JAVATIM2.db";
 
         Connection conn = null; //create a connection to the SQL db
 
         try {
-            conn = DriverManager.getConnection(url);
+            conn = ApplicationConstants.MYSQL_SELECTED ?
+                     DriverManager.getConnection(ApplicationConstants.MYSQL,
+                            ApplicationConstants.USER,
+                            ApplicationConstants.PWD) :
+                    DriverManager.getConnection(ApplicationConstants.SQLITE);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -90,16 +95,15 @@ public class SqliteWrapper {
     }
 
     public List<String> getAllColumns(String tableName) {
-        String sql = "PRAGMA table_info(" + tableName + ")";
         List<String> columns = new ArrayList<>();
         String toReturn = "";
         try {
             Connection conn = this.connect();
-            Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery(sql);
+            DatabaseMetaData md = conn.getMetaData();
+            ResultSet rs = md.getColumns(null, null, tableName, null);
             while (rs.next()) {
 
-                columns.add(rs.getString(2));
+                columns.add(rs.getString(4));
             }
 
         } catch (SQLException ex) {
@@ -115,10 +119,10 @@ public class SqliteWrapper {
         try {
             Connection conn = this.connect();
             DatabaseMetaData md = conn.getMetaData();
-            ResultSet rs = md.getTables(null, null, "%", null);
+            ResultSet rs = md.getTables(null, null, null, new String[]{"TABLE"});
             while (rs.next()) {
 
-               tables.add(rs.getString(3));
+                tables.add(rs.getString(3));
             }
 
         } catch (SQLException ex) {
@@ -139,9 +143,9 @@ public class SqliteWrapper {
 
             while (resultSet.next()) {
                 employees.add(new Employee(resultSet.getInt("id") + "",
-                                resultSet.getString(2),
-                                resultSet.getInt("age"),
-                                resultSet.getInt("salary")));
+                        resultSet.getString(2),
+                        resultSet.getInt("age"),
+                        resultSet.getInt("salary")));
             }
 
         } catch (SQLException ex) {
