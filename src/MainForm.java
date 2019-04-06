@@ -1,4 +1,3 @@
-import helpers.EmployeParser;
 import helpers.SqliteWrapper;
 import model.Department;
 import model.Employee;
@@ -10,6 +9,7 @@ import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.awt.event.ActionEvent;
@@ -262,15 +262,26 @@ public class MainForm {
         chckbxUnique.setBounds(388, 110, 117, 23);
         panel_5.add(chckbxUnique);
 
-        JButton btnAddColumn = new JButton("Add");
-        btnAddColumn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-            }
-        });
+        JTextArea textAreaQueryTableCreation = new JTextArea();
+        textAreaQueryTableCreation.setBounds(10, 140, 615, 179);
+        panel_5.add(textAreaQueryTableCreation);
+
+
+        List<String> myList = new ArrayList<>();
 
         JButton btnAdd = new JButton("Add");
+        btnAdd.setBounds(194, 7, 89, 23);
+        panel_5.add(btnAdd);
         btnAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                String text = "";
+
+                text = "CREATE TABLE IF NOT EXISTS " + "\"" + textFieldTblName.getText() + "\"" + " ";
+                myList.add(text);
+
+                textAreaQueryTableCreation.setText(text);
+                btnAdd.setEnabled(false);
+                textFieldTblName.setEnabled(false);
             }
         });
 
@@ -283,13 +294,59 @@ public class MainForm {
         comboBoxType.setBounds(293, 33, 89, 20);
         panel_5.add(comboBoxType);
 
-        JTextArea textAreaQueryTableCreation = new JTextArea();
-        textAreaQueryTableCreation.setBounds(10, 140, 615, 179);
-        panel_5.add(textAreaQueryTableCreation);
-        btnAdd.setBounds(194, 7, 89, 23);
-        panel_5.add(btnAdd);
+        JButton btnAddColumn = new JButton("Add");
         btnAddColumn.setBounds(522, 32, 89, 23);
         panel_5.add(btnAddColumn);
+        btnAddColumn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                String text = "";
+                String toReturn = "";
+                String getComboText = "";
+
+                if (chckbxPrimaryKey.isSelected()) {
+                    chckbxAutoIncrement.setSelected(true);
+                    chckbxAutoIncrement.setEnabled(false);
+                    //getComboText = chckbxPrimaryKey.getText() +" " +chckbxAutoIncrement.getText();
+                    getComboText = "PRIMARY KEY" + " " + "AUTOINCREMENT";
+                    chckbxPrimaryKey.setEnabled(false);
+                    chckbxPrimaryKey.setSelected(false);
+                    chckbxAutoIncrement.setSelected(false);
+
+                }
+                if (chckbxNotNull.isSelected()) {
+                    getComboText = "NOT NULL";
+                    chckbxNotNull.setSelected(false);
+
+                } else {
+                    getComboText = "NULL";
+                    chckbxNotNull.setSelected(false);
+
+                }
+                if (chckbxUnique.isSelected()) {
+                    chckbxNotNull.setSelected(true);
+                    getComboText = "UNIQUE NOT NULL";
+                    chckbxUnique.setSelected(false);
+                    chckbxNotNull.setSelected(false);
+                }
+
+                text = textFieldColumnName.getText() + " " + comboBoxType.getSelectedItem() + " " + getComboText;
+                myList.add(text);
+                int count = 0;
+                for (String s : myList) {
+                    if (count == 1) toReturn += "\n( ";
+                    else if (count > 0 && count < myList.size()) toReturn += ",\n ";
+
+                    count++;
+                    toReturn += s;
+
+                }
+                toReturn += ");";
+
+
+                textAreaQueryTableCreation.setText(toReturn);
+            }
+        });
+
 
         JButton btnCreateTable = new JButton("Create table");
         btnCreateTable.addActionListener(new ActionListener() {
@@ -300,9 +357,8 @@ public class MainForm {
         panel_5.add(btnCreateTable);
         btnNewButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-
-
-
+                SqliteWrapper sqliteWrapper = new SqliteWrapper();
+                sqliteWrapper.createTable(textAreaQueryTableCreation.getText());
             }
         });
         btnNewButton_1.addActionListener(new ActionListener() {
@@ -333,6 +389,114 @@ public class MainForm {
                     }
                 }
                 editorPane.setText(text);
+            }
+        });
+
+        JPanel panelJoin = new JPanel();
+        tabbedPane.addTab("Join", null, panelJoin, null);
+        panelJoin.setLayout(null);
+
+        JComboBox comboBoxJoinTable1 = new JComboBox();
+
+        comboBoxJoinTable1.setBounds(10, 160, 106, 20);
+        panelJoin.add(comboBoxJoinTable1);
+
+        JComboBox comboBoxJoinTable2 = new JComboBox();
+        comboBoxJoinTable2.setBounds(205, 160, 127, 20);
+        panelJoin.add(comboBoxJoinTable2);
+
+        JComboBox comboBoxTable1 = new JComboBox();
+        comboBoxTable1.setBounds(10, 73, 106, 20);
+        comboBoxTable1.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                SqliteWrapper sqliteWrapper = new SqliteWrapper();
+                comboBoxJoinTable1.removeAllItems();
+
+                for (String column : sqliteWrapper.getAllColumns(
+                        (String)comboBoxTable1.getSelectedItem())
+                     ) {
+                    comboBoxJoinTable1.addItem(column);
+
+                }
+            }
+        });
+        panelJoin.add(comboBoxTable1);
+
+        JComboBox comboBoxTable2 = new JComboBox();
+        comboBoxTable2.setBounds(205, 73, 122, 20);
+        panelJoin.add(comboBoxTable2);
+
+        JLabel lblTable = new JLabel("Table1");
+        lblTable.setBounds(10, 48, 106, 14);
+        panelJoin.add(lblTable);
+
+        JLabel lblTable_1 = new JLabel("Table2");
+        lblTable_1.setBounds(205, 48, 46, 14);
+        panelJoin.add(lblTable_1);
+
+        JButton btnGettables = new JButton("Get Tables");
+        btnGettables.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                SqliteWrapper sqliteWrapper = new SqliteWrapper();
+                List<String> tableList = sqliteWrapper.getAllTables();
+                for (String table: tableList
+                     ) {
+                    comboBoxTable1.addItem(table);
+                    comboBoxTable2.addItem(table);
+                }
+
+            }
+        });
+        btnGettables.setToolTipText("Click button to read all tables");
+        btnGettables.setBounds(10, 14, 106, 23);
+        panelJoin.add(btnGettables);
+
+        JLabel lblJoinOn = new JLabel("Join on");
+        lblJoinOn.setBounds(20, 104, 46, 14);
+        panelJoin.add(lblJoinOn);
+
+        JComboBox comboBoxJoinType = new JComboBox();
+        comboBoxJoinType.setBounds(205, 104, 122, 20);
+        panelJoin.add(comboBoxJoinType);
+
+        JLabel lblTable_2 = new JLabel("Table2");
+        lblTable_2.setBounds(205, 135, 46, 14);
+        panelJoin.add(lblTable_2);
+
+        JLabel lblTable_3 = new JLabel("Table1");
+        lblTable_3.setBounds(10, 135, 46, 14);
+        panelJoin.add(lblTable_3);
+
+
+
+        JScrollPane scrollPane_4 = new JScrollPane();
+        scrollPane_4.setBounds(10, 191, 615, 130);
+        panelJoin.add(scrollPane_4);
+
+        JTextArea textAreaJoinResult = new JTextArea();
+        scrollPane_4.setViewportView(textAreaJoinResult);
+
+        JButton btnCreateQuery = new JButton("Create query");
+        btnCreateQuery.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+        btnCreateQuery.setBounds(10, 332, 106, 23);
+        panelJoin.add(btnCreateQuery);
+
+        JButton btnExecuteQuery = new JButton("Execute query");
+        btnExecuteQuery.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+        btnExecuteQuery.setBounds(126, 332, 106, 23);
+        panelJoin.add(btnExecuteQuery);
+        btnNewButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+
+
+
             }
         });
 

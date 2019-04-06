@@ -89,6 +89,44 @@ public class SqliteWrapper {
         return departments;
     }
 
+    public List<String> getAllColumns(String tableName) {
+        String sql = "PRAGMA table_info(" + tableName + ")";
+        List<String> columns = new ArrayList<>();
+        String toReturn = "";
+        try {
+            Connection conn = this.connect();
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+            while (rs.next()) {
+
+                columns.add(rs.getString(2));
+            }
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return columns;
+    }
+
+    public List<String> getAllTables() {
+
+        List<String> tables = new ArrayList<>();
+        String toReturn = "";
+        try {
+            Connection conn = this.connect();
+            DatabaseMetaData md = conn.getMetaData();
+            ResultSet rs = md.getTables(null, null, "%", null);
+            while (rs.next()) {
+
+               tables.add(rs.getString(3));
+            }
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return tables;
+    }
+
     public List<Employee> selectAllAsEmployees() {
         String sql = "SELECT * FROM employees";
         List<Employee> employees = null;
@@ -161,4 +199,16 @@ public class SqliteWrapper {
 
     }
 
+    public void createTable(String str) {
+        String sql = str;
+        try {
+            Connection conn = this.connect();
+            Statement statement = conn.createStatement();
+            statement.executeQuery(sql);
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+    }
 }
